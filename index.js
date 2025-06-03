@@ -24,6 +24,25 @@ app.get('/api/hello', function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
+// second API endpoint
+app.get('/api/whoami', function (req, res) {
+  // Get client IP with proper fallback
+  let clientIp = req.headers['x-forwarded-for'] || 
+                  req.ip ||
+                  req.socket.remoteAddress;
+  
+  // Handle comma-separated IPs in x-forwarded-for
+  if (clientIp && clientIp.includes(',')) {
+    clientIp = clientIp.split(',')[0].trim();
+  }
+
+  res.json({ 
+    ipaddress: clientIp,
+    language: req.headers['accept-language'] || 'Unknown',
+    software: req.headers['user-agent'] || 'Unknown'
+  });
+});
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
